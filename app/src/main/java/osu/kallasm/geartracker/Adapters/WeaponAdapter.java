@@ -1,6 +1,7 @@
 //Source: https://www.androidhive.info/2016/01/android-working-with-recycler-view/
 package osu.kallasm.geartracker.Adapters;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -49,6 +50,16 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
         holder.wList_talentOne.setText(wpn.firstTalent);
         holder.wList_talentTwo.setText(wpn.secondTalent);
         holder.wList_freeTalent.setText(wpn.freeTalent);
+        if (wpn.attachment == null){
+            //Hide attachment details
+            ConstraintLayout attach = holder.itemView.findViewById(R.id.wList_attached);
+            //Source: https://stackoverflow.com/questions/5756136/how-to-hide-a-view-programmatically
+            attach.setVisibility(View.GONE);
+        }
+        else{
+            ConstraintLayout unattach = holder.itemView.findViewById(R.id.wList_unattachedLayout);
+            unattach.setVisibility(View.GONE);
+        }
     }
 
     @Override

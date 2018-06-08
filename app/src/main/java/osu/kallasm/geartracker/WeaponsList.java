@@ -51,4 +51,7 @@ public class WeaponsList extends AppCompatActivity {
         Intent intent = new Intent(WeaponsList.this, AddWeapon.class);
         startActivity(intent);
     }
+
+    public void addAttachment(View v){
+    }
 }
