@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="208dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <Button
+            android:id="@+id/wList_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Edit Weapon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/wList_editAttachment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Attach."
+            app:layout_constraintEnd_toEndOf="@+id/wList_edit"
+            app:layout_constraintTop_toBottomOf="@+id/wList_edit" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:id="@+id/wList_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weapon Name"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/wList_damage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingLeft="16dp"
+                    android:text="100%"
+                    app:layout_constraintStart_toEndOf="@+id/wList_name"
+                    tools:layout_editor_absoluteY="0dp" />
+
+                <TextView
+                    android:id="@+id/wList_damageText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="Damage"
+                    app:layout_constraintStart_toEndOf="@+id/wList_damage"
+                    tools:layout_editor_absoluteY="0dp" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/wList_talentOne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:text="Talent One"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/wList_comma1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=","
+                    app:layout_constraintStart_toEndOf="@+id/wList_talentOne" />
+
+                <TextView
+                    android:id="@+id/wList_talentTwo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="Talent Two"
+                    app:layout_constraintStart_toEndOf="@+id/wList_comma1"
+                    tools:layout_editor_absoluteY="0dp" />
+
+                <TextView
+                    android:id="@+id/wList_comma2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=","
+                    app:layout_constraintStart_toEndOf="@+id/wList_talentTwo" />
+
+                <TextView
+                    android:id="@+id/wList_freeTalent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="Free Talent"
+                    app:layout_constraintStart_toEndOf="@+id/wList_comma2"
+                    tools:layout_editor_absoluteY="0dp" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/wList_attachmentText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="Attachment: "
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/wList_attachmentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="Attachment Name"
+                    app:layout_constraintStart_toEndOf="@+id/wList_attachmentText"
+                    tools:layout_editor_absoluteY="0dp" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/wList_attachmentAttOne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="Attribute One" />
+
+                <TextView
+                    android:id="@+id/wList_attachmentComma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@+id/wList_attachmentAttOne"
+                    android:text="," />
+
+                <TextView
+                    android:id="@+id/wList_attachmentAttTwo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/wList_attachmentComma"
+                    android:text="Attribute Two" />
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

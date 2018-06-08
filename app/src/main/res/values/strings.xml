@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GearTracker</string>
+    <string name="home_weapons">Weapons</string>
+    <string name="home_attachments">Attachments</string>
+</resources>
