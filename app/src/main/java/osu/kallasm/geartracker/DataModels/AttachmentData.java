@@ -2,19 +2,20 @@ package osu.kallasm.geartracker.DataModels;
 
 import com.google.gson.annotations.Expose;
 
-public class WeaponData {
+public class AttachmentData {
     @Expose
     public String name;
     @Expose
-    public int damage;
+    public String primaryAttribute;
     @Expose
-    public String firstTalent;
+    public int primaryValue;
     @Expose
-    public String secondTalent;
+    public String secondaryAttribute;
     @Expose
-    public String freeTalent;
+    public int secondaryValue;
     @Expose
-    public String attachment = null;
+    public String attached_to = null;
     public String self = null;
     public String id = null;
+
 }

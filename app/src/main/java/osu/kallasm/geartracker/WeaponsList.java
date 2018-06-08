@@ -1,11 +1,13 @@
 //Source: https://www.androidhive.info/2016/01/android-working-with-recycler-view/
 package osu.kallasm.geartracker;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,5 +45,10 @@ public class WeaponsList extends AppCompatActivity {
     public void updateList(List<WeaponData> list){
         adapter = new WeaponAdapter(list);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void showAddWeapon(View v){
+        Intent intent = new Intent(WeaponsList.this, AddWeapon.class);
+        startActivity(intent);
     }
 }

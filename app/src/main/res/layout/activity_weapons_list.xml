@@ -26,11 +26,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textSize="18dp"
             android:text="@string/home_weapons" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/wList_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="420dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/wList_addWeapon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showAddWeapon"
+            android:text="Add Weapon" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
