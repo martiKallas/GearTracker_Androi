@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import osu.kallasm.geartracker.DataModels.WeaponData;
 import osu.kallasm.geartracker.Utils.PercentFilter;
 import osu.kallasm.geartracker.Utils.StaticLists;
 
@@ -36,6 +37,14 @@ public class AddWeapon extends AppCompatActivity {
     }
 
     public void addWeapon(View v){
-
+        WeaponData newWeapon = new WeaponData();
+        newWeapon.name = name.getText().toString();
+        newWeapon.damage = Integer.parseInt(damage.getText().toString());
+        newWeapon.firstTalent = firstTalent.getSelectedItem().toString();
+        newWeapon.secondTalent = secondTalent.getSelectedItem().toString();
+        newWeapon.freeTalent = freeTalent.getSelectedItem().toString();
+        newWeapon.attachment = null;
+        HttpHandler handler = new HttpHandler();
+        handler.addWeapon(newWeapon);
     }
 }
