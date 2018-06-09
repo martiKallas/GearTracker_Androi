@@ -21,7 +21,9 @@
         <activity android:name=".WeaponsList" />
         <activity android:name=".AttachmentsList" />
         <activity android:name=".AddWeapon" />
-        <activity android:name=".EditWeapon"></activity>
+        <activity android:name=".EditWeapon" />
+        <activity android:name=".EditAttachment" />
+        <activity android:name=".AddAttachment"></activity>
     </application>
 
 </manifest>

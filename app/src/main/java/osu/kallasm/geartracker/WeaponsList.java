@@ -30,7 +30,6 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView {
         setContentView(R.layout.activity_weapons_list);
 
         recyclerView = (RecyclerView) findViewById(R.id.wList_recyclerView);
-        adapter = new WeaponAdapter(weaponList);
         RecyclerView.LayoutManager gLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(gLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -39,7 +38,10 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView {
        manager = ListManager.getListManager(null);
        weaponList = new ArrayList<>();
        manager.copyWeapons(weaponList);
-       if(weaponList.size() > 0) updateList(weaponList);
+       if(weaponList.size() > 0){
+           adapter = new WeaponAdapter(weaponList);
+           updateWeaponList(weaponList);
+       }
        manager.registerWeaponListView(this);
     }
 
@@ -50,7 +52,7 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView {
     }
 
     @Override
-    public void updateList(List<WeaponData> list){
+    synchronized public void updateWeaponList(List<WeaponData> list){
         adapter = new WeaponAdapter(list);
         recyclerView.setAdapter(adapter);
     }

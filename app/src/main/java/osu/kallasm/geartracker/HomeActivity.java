@@ -18,6 +18,7 @@ public class HomeActivity extends AppCompatActivity {
         ListManager manager = ListManager.getListManager(this);
         try {
             manager.getWeapons();
+            manager.getAttachments();
         }
         catch(IOException e){
             e.printStackTrace();

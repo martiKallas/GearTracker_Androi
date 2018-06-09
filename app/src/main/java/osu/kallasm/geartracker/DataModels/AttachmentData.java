@@ -2,7 +2,9 @@ package osu.kallasm.geartracker.DataModels;
 
 import com.google.gson.annotations.Expose;
 
-public class AttachmentData {
+import java.io.Serializable;
+
+public class AttachmentData implements Serializable{
     @Expose
     public String name;
     @Expose
@@ -18,4 +20,10 @@ public class AttachmentData {
     public String self = null;
     public String id = null;
 
+    public AttachmentData(){
+        super();
+        attached_to = null;
+        self = null;
+        id = null;
+    }
 }

@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import osu.kallasm.geartracker.DataModels.WeaponData;
+import osu.kallasm.geartracker.Utils.ListManager;
 import osu.kallasm.geartracker.Utils.PercentFilter;
 import osu.kallasm.geartracker.Utils.StaticLists;
 
@@ -18,6 +19,7 @@ public class EditWeapon extends AppCompatActivity {
     Spinner firstTalent, secondTalent, freeTalent, attachment;
     EditText name, damage;
     WeaponData weapon;
+    ListManager manager = ListManager.getListManager(null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,14 +58,16 @@ public class EditWeapon extends AppCompatActivity {
     }
 
     public void updateWeapon(View v){
-        WeaponData newWeapon = new WeaponData();
-        newWeapon.name = name.getText().toString();
-        newWeapon.damage = Integer.parseInt(damage.getText().toString());
-        newWeapon.firstTalent = firstTalent.getSelectedItem().toString();
-        newWeapon.secondTalent = secondTalent.getSelectedItem().toString();
-        newWeapon.freeTalent = freeTalent.getSelectedItem().toString();
-        newWeapon.attachment = null;
-        HttpHandler handler = new HttpHandler();
-        //handler.editWeapon(newWeapon);
+        weapon.name = name.getText().toString();
+        weapon.damage = Integer.parseInt(damage.getText().toString());
+        weapon.firstTalent = firstTalent.getSelectedItem().toString();
+        weapon.secondTalent = secondTalent.getSelectedItem().toString();
+        weapon.freeTalent = freeTalent.getSelectedItem().toString();
+        weapon.attachment = null;
+        manager.updateWeapon(weapon);
+    }
+
+    public void deleteWeapon(View v){
+        manager.deleteWeapon(weapon);
     }
 }

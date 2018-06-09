@@ -5,5 +5,5 @@ import java.util.List;
 import osu.kallasm.geartracker.DataModels.WeaponData;
 
 public interface WeaponListView {
-    public void updateList(List<WeaponData> list);
+    public void updateWeaponList(List<WeaponData> list);
 }

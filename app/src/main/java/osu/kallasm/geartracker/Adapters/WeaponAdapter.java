@@ -36,38 +36,44 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
             wList_editWeapon = (Button) view.findViewById(R.id.wList_editWeapon);
 
             //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview
-            wList_removeAttachment.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    int position = getAdapterPosition();
-                    WeaponData weapon = weaponList.get(position);
-                    System.out.println("Remove attachment from " + weapon.name);
-                }
-            });
+            if(wList_removeAttachment != null) {
+                wList_removeAttachment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        WeaponData weapon = weaponList.get(position);
+                        System.out.println("Remove attachment from " + weapon.name);
+                    }
+                });
+            }
 
-            wList_addAttachment.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    int position = getAdapterPosition();
-                    WeaponData weapon = weaponList.get(position);
-                    System.out.println("Add attachment to " + weapon.name);
-                }
-            });
+            if(wList_addAttachment != null) {
+                wList_addAttachment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        WeaponData weapon = weaponList.get(position);
+                        System.out.println("Add attachment to " + weapon.name);
+                    }
+                });
+            }
 
-            wList_editWeapon.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    int position = getAdapterPosition();
-                    WeaponData weapon = weaponList.get(position);
-                    System.out.println("Edit weapon " + weapon.name);
-                    //Get Activity source: https://stackoverflow.com/questions/8276634/android-get-hosting-activity-from-a-view
-                    Activity wList = (Activity)v.getContext();
-                    Intent editIntent = new Intent(wList, EditWeapon.class);
-                    //Passing object source: https://stackoverflow.com/questions/3323074/android-difference-between-parcelable-and-serializable
-                    editIntent.putExtra("weapon", weapon);
-                    wList.startActivity(editIntent);
-                }
-            });
+            if(wList_editWeapon != null) {
+                wList_editWeapon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        WeaponData weapon = weaponList.get(position);
+                        System.out.println("Edit weapon " + weapon.name);
+                        //Get Activity source: https://stackoverflow.com/questions/8276634/android-get-hosting-activity-from-a-view
+                        Activity wList = (Activity) v.getContext();
+                        Intent editIntent = new Intent(wList, EditWeapon.class);
+                        //Passing object source: https://stackoverflow.com/questions/3323074/android-difference-between-parcelable-and-serializable
+                        editIntent.putExtra("weapon", weapon);
+                        wList.startActivity(editIntent);
+                    }
+                });
+            }
         }
     }
 
@@ -86,6 +92,7 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
 
     @Override
     public void onBindViewHolder(WeaponViewHolder holder, int position){
+        if(weaponList.size() <= 0) return;
         WeaponData wpn = weaponList.get(position);
         holder.wList_name.setText(wpn.name);
         holder.wList_damage.setText(String.valueOf(wpn.damage));
