@@ -13,8 +13,8 @@
         tools:layout_editor_absoluteY="0dp">
 
         <Button
-            android:id="@+id/wList_edit"
-            android:layout_width="wrap_content"
+            android:id="@+id/wList_editWeapon"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginEnd="8dp"
@@ -123,12 +123,12 @@
                 android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/wList_editAttachment"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/wList_removeAttachment"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="Remove"
+                    android:text="Unattach"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -215,11 +215,11 @@
 
                 <Button
                     android:id="@+id/wList_addAttachment"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="Add"
+                    android:text="Attach"
                     android:onClick="addAttachment"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -1,17 +1,21 @@
 //Source: https://www.androidhive.info/2016/01/android-working-with-recycler-view/
 package osu.kallasm.geartracker.Adapters;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 import osu.kallasm.geartracker.DataModels.WeaponData;
+import osu.kallasm.geartracker.EditWeapon;
 import osu.kallasm.geartracker.R;
 
 public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponViewHolder> {
@@ -19,6 +23,7 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
     private List<WeaponData> weaponList;
     public class WeaponViewHolder extends RecyclerView.ViewHolder{
         public TextView wList_name, wList_damage, wList_talentOne, wList_talentTwo, wList_freeTalent;
+        public Button wList_removeAttachment, wList_addAttachment, wList_editWeapon;
         public WeaponViewHolder(View view){
             super(view);
             wList_name = (TextView) view.findViewById(R.id.wList_name);
@@ -26,6 +31,43 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
             wList_talentOne = (TextView) view.findViewById(R.id.wList_talentOne);
             wList_talentTwo = (TextView) view.findViewById(R.id.wList_talentTwo);
             wList_freeTalent = (TextView) view.findViewById(R.id.wList_freeTalent);
+            wList_removeAttachment = (Button) view.findViewById(R.id.wList_removeAttachment);
+            wList_addAttachment = (Button) view.findViewById(R.id.wList_addAttachment);
+            wList_editWeapon = (Button) view.findViewById(R.id.wList_editWeapon);
+
+            //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview
+            wList_removeAttachment.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int position = getAdapterPosition();
+                    WeaponData weapon = weaponList.get(position);
+                    System.out.println("Remove attachment from " + weapon.name);
+                }
+            });
+
+            wList_addAttachment.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int position = getAdapterPosition();
+                    WeaponData weapon = weaponList.get(position);
+                    System.out.println("Add attachment to " + weapon.name);
+                }
+            });
+
+            wList_editWeapon.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int position = getAdapterPosition();
+                    WeaponData weapon = weaponList.get(position);
+                    System.out.println("Edit weapon " + weapon.name);
+                    //Get Activity source: https://stackoverflow.com/questions/8276634/android-get-hosting-activity-from-a-view
+                    Activity wList = (Activity)v.getContext();
+                    Intent editIntent = new Intent(wList, EditWeapon.class);
+                    //Passing object source: https://stackoverflow.com/questions/3323074/android-difference-between-parcelable-and-serializable
+                    editIntent.putExtra("weapon", weapon);
+                    wList.startActivity(editIntent);
+                }
+            });
         }
     }
 
@@ -60,6 +102,7 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
             ConstraintLayout unattach = holder.itemView.findViewById(R.id.wList_unattachedLayout);
             unattach.setVisibility(View.GONE);
         }
+
     }
 
     @Override

@@ -15,11 +15,14 @@ import java.util.List;
 
 import osu.kallasm.geartracker.Adapters.WeaponAdapter;
 import osu.kallasm.geartracker.DataModels.WeaponData;
+import osu.kallasm.geartracker.Interfaces.WeaponListView;
+import osu.kallasm.geartracker.Utils.ListManager;
 
-public class WeaponsList extends AppCompatActivity {
+public class WeaponsList extends AppCompatActivity implements WeaponListView {
     private WeaponAdapter adapter;
     private RecyclerView recyclerView;
-    private List<WeaponData> weaponList;
+    private ListManager manager;
+    private ArrayList<WeaponData> weaponList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +36,20 @@ public class WeaponsList extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //recyclerView.setAdapter(adapter);
 
-        HttpHandler http = new HttpHandler();
-        try {
-            http.getWeapons(this);
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+       manager = ListManager.getListManager();
+       weaponList = new ArrayList<>();
+       manager.copyWeapons(weaponList);
+       if(weaponList.size() > 0) updateList(weaponList);
+       manager.registerWeaponListView(this);
     }
 
+    @Override
+    public void onBackPressed(){
+        manager.registerWeaponListView(this);
+        super.onBackPressed();
+    }
+
+    @Override
     public void updateList(List<WeaponData> list){
         adapter = new WeaponAdapter(list);
         recyclerView.setAdapter(adapter);

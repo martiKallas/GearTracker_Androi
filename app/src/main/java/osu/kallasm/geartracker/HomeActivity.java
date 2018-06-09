@@ -5,12 +5,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import java.io.IOException;
+
+import osu.kallasm.geartracker.Utils.ListManager;
+
 public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        ListManager manager = ListManager.getListManager();
+        try {
+            manager.getWeapons();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void showWeapons(View v){

@@ -41,6 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="showAddWeapon"
-            android:text="Add Weapon" />
+            android:text="Add New Weapon" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

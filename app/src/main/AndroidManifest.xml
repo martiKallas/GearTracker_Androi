@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".WeaponsList" />
         <activity android:name=".AttachmentsList" />
-        <activity android:name=".AddWeapon"></activity>
+        <activity android:name=".AddWeapon" />
+        <activity android:name=".EditWeapon"></activity>
     </application>
 
 </manifest>

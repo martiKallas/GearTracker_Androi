@@ -19,6 +19,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import osu.kallasm.geartracker.Adapters.WeaponAdapter;
 import osu.kallasm.geartracker.DataModels.WeaponData;
+import osu.kallasm.geartracker.Utils.ListManager;
 
 public class HttpHandler {
     private String url = "http://cs496-finalproject-geartracker.appspot.com";
@@ -59,6 +60,40 @@ public class HttpHandler {
                             parent.updateList(responseList);
                         }
                     });
+                } else {
+                    System.out.println("Bad response in getWeapons. Code: " + status);
+                }
+            }
+        });
+    }
+
+    //Returns 0 on success. Fills in weaponList with weapons from server
+    public void getWeaponsManager(final ListManager parent) throws IOException {
+        Request request = new Request.Builder()
+                .url(url + "/weapons")
+                .build();
+        client.newCall(request).enqueue(new Callback(){
+            @Override
+            public void onFailure(Call call, IOException e){
+                e.printStackTrace();
+                System.out.println("TODO: Failed in getWeapons");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                int status = response.code();
+                if (status >= 200 && status < 400) {
+                    String res = response.body().string();
+                    WeaponData[] responseArray = gson.fromJson(res, WeaponData[].class);
+                    System.out.println("Size of list: " + responseArray.length);
+                    final ArrayList<WeaponData> responseList = new ArrayList<>();
+                    for (WeaponData weapon : responseArray) {
+                        System.out.println("Weapon: " + weapon.name);
+                        System.out.println("ID: " + weapon.id);
+                        responseList.add(weapon);
+                    }
+                    parent.setWeaponList(responseList);
+                    parent.refreshWeaponsLists();
                 } else {
                     System.out.println("Bad response in getWeapons. Code: " + status);
                 }
