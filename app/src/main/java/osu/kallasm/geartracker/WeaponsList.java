@@ -36,7 +36,7 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //recyclerView.setAdapter(adapter);
 
-       manager = ListManager.getListManager();
+       manager = ListManager.getListManager(null);
        weaponList = new ArrayList<>();
        manager.copyWeapons(weaponList);
        if(weaponList.size() > 0) updateList(weaponList);

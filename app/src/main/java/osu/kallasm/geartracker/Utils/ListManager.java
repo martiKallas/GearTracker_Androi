@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import osu.kallasm.geartracker.DataModels.AttachmentData;
 import osu.kallasm.geartracker.DataModels.WeaponData;
+import osu.kallasm.geartracker.HomeActivity;
 import osu.kallasm.geartracker.HttpHandler;
 import osu.kallasm.geartracker.Interfaces.WeaponListView;
 
@@ -15,17 +16,19 @@ public class ListManager {
     private static HttpHandler client;
     private ArrayList<WeaponData> weaponList = null;
     private ArrayList<AttachmentData> attachmentList = null;
-    private ArrayList<WeaponListView> weaponListViews;
+    private ArrayList<WeaponListView> weaponListViews = null;
+    private HomeActivity home;
 
     private ListManager(){}
 
-    synchronized public static ListManager getListManager(){
+    synchronized public static ListManager getListManager(HomeActivity home){
         if (manager == null){
             manager = new ListManager();
             manager.client = new HttpHandler();
             manager.weaponList = new ArrayList<>();
             manager.attachmentList = new ArrayList<>();
             manager.weaponListViews = new ArrayList<>();
+            manager.home = home;
         }
         return manager;
     }
@@ -44,7 +47,14 @@ public class ListManager {
 
     synchronized public void refreshWeaponsLists(){
         for (WeaponListView view : weaponListViews) {
-            view.updateList(weaponList);
+            final WeaponListView v = view;
+            //Source: CS496 Lecture - okhttp
+            home.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    v.updateList(weaponList);
+                }
+            });
         }
     }
 
@@ -61,6 +71,15 @@ public class ListManager {
     synchronized public ArrayList<AttachmentData> getAttachmentList() {return attachmentList;}
 
     public void getWeapons() throws IOException{
-        client.getWeaponsManager(this);
+        client.getWeapons(this);
+    }
+
+    public void addWeapon(WeaponData weapon){
+        client.addWeapon(this, weapon);
+    }
+
+    synchronized public void weaponAdded(WeaponData weapon){
+        weaponList.add(weapon);
+        refreshWeaponsLists();
     }
 }

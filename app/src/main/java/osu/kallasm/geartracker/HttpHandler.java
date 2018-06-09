@@ -29,46 +29,7 @@ public class HttpHandler {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     //Returns 0 on success. Fills in weaponList with weapons from server
-    public void getWeapons(final WeaponsList parent) throws IOException {
-        Request request = new Request.Builder()
-                .url(url + "/weapons")
-                .build();
-        client.newCall(request).enqueue(new Callback(){
-            @Override
-            public void onFailure(Call call, IOException e){
-                e.printStackTrace();
-                System.out.println("TODO: Failed in getWeapons");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                int status = response.code();
-                if (status >= 200 && status < 400) {
-                    String res = response.body().string();
-                    WeaponData[] responseArray = gson.fromJson(res, WeaponData[].class);
-                    System.out.println("Size of list: " + responseArray.length);
-                    final ArrayList<WeaponData> responseList = new ArrayList<>();
-                    for (WeaponData weapon : responseArray) {
-                        System.out.println("Weapon: " + weapon.name);
-                        System.out.println("ID: " + weapon.id);
-                        responseList.add(weapon);
-                    }
-                    //Source: CS496 Lecture - okhttp
-                    parent.runOnUiThread(new Runnable(){
-                        @Override
-                        public void run(){
-                            parent.updateList(responseList);
-                        }
-                    });
-                } else {
-                    System.out.println("Bad response in getWeapons. Code: " + status);
-                }
-            }
-        });
-    }
-
-    //Returns 0 on success. Fills in weaponList with weapons from server
-    public void getWeaponsManager(final ListManager parent) throws IOException {
+    public void getWeapons(final ListManager parent) throws IOException {
         Request request = new Request.Builder()
                 .url(url + "/weapons")
                 .build();
@@ -101,7 +62,7 @@ public class HttpHandler {
         });
     }
 
-    public void addWeapon(WeaponData weapon){
+    public void addWeapon(final ListManager manager, WeaponData weapon){
         String json = exGson.toJson(weapon);
         System.out.println("Log weapon: " + json);
         RequestBody body = RequestBody.create(JSON, json);
@@ -123,6 +84,7 @@ public class HttpHandler {
                     System.out.println("TODO: good response in addWeapon. Code: " + status);
                     String res = response.body().string();
                     WeaponData newWeapon = gson.fromJson(res, WeaponData.class);
+                    manager.weaponAdded(newWeapon);
                 }
                 else{
                     System.out.println("TODO: bad response in addWeapon. Code: " + status);
@@ -130,5 +92,6 @@ public class HttpHandler {
             }
         });
     }
+
 
 }
