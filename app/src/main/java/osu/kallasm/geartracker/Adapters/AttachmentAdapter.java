@@ -3,13 +3,17 @@ package osu.kallasm.geartracker.Adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import osu.kallasm.geartracker.DataModels.AttachmentData;
@@ -22,6 +26,14 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.At
     public class AttachmentViewHolder extends RecyclerView.ViewHolder{
         public TextView aList_name, aList_primaryAttribute, aList_primaryValue, aList_secondaryAttribute, aList_secondaryValue;
         public Button aList_unattach, aList_attach, aList_editAttachment;
+        public Spinner aList_weaponSpinner;
+
+        public void setSpinner(AppCompatActivity view, ArrayList<String> list){
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(view, R.layout.spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            aList_weaponSpinner.setAdapter(adapter);
+        }
+
         public AttachmentViewHolder(View view){
             super(view);
             aList_name = (TextView) view.findViewById(R.id.aList_name);
@@ -32,6 +44,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.At
             aList_unattach = (Button) view.findViewById(R.id.aList_unattach);
             aList_attach = (Button) view.findViewById(R.id.aList_addAttachment);
             aList_editAttachment = (Button) view.findViewById(R.id.aList_editAttachment);
+            aList_weaponSpinner = (Spinner) view.findViewById(R.id.aList_weaponSpinner);
 
             if(aList_unattach != null) {
                 //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview

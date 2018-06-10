@@ -4,14 +4,18 @@ package osu.kallasm.geartracker.Adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import osu.kallasm.geartracker.DataModels.WeaponData;
@@ -24,6 +28,15 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
     public class WeaponViewHolder extends RecyclerView.ViewHolder{
         public TextView wList_name, wList_damage, wList_talentOne, wList_talentTwo, wList_freeTalent;
         public Button wList_removeAttachment, wList_addAttachment, wList_editWeapon;
+        public Spinner wList_attachmentSpinner;
+
+
+        public void setSpinner(AppCompatActivity view, ArrayList<String> list){
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(view, R.layout.spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            wList_attachmentSpinner.setAdapter(adapter);
+        }
+
         public WeaponViewHolder(View view){
             super(view);
             wList_name = (TextView) view.findViewById(R.id.wList_name);
@@ -34,6 +47,7 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
             wList_removeAttachment = (Button) view.findViewById(R.id.wList_removeAttachment);
             wList_addAttachment = (Button) view.findViewById(R.id.wList_addAttachment);
             wList_editWeapon = (Button) view.findViewById(R.id.wList_editWeapon);
+            wList_attachmentSpinner = (Spinner) view.findViewById(R.id.wList_attachmentSpinner);
 
             //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview
             if(wList_removeAttachment != null) {

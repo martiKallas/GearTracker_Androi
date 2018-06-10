@@ -1,14 +1,10 @@
 package osu.kallasm.geartracker;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -17,7 +13,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import osu.kallasm.geartracker.Adapters.WeaponAdapter;
 import osu.kallasm.geartracker.DataModels.AttachmentData;
 import osu.kallasm.geartracker.DataModels.WeaponData;
 import osu.kallasm.geartracker.Utils.ListManager;
@@ -55,7 +50,6 @@ public class HttpHandler {
                     }
                     if (responseList.size() <= 0) return;
                     parent.setWeaponList(responseList);
-                    parent.refreshWeaponsLists();
                 } else {
                     System.out.println("Bad response in getWeapons. Code: " + status);
                 }
@@ -89,7 +83,6 @@ public class HttpHandler {
                     }
                     if (responseList.size() <= 0) return;
                     parent.setAttachmentList(responseList);
-                    parent.refreshAttachmentLists();
                 } else {
                     System.out.println("Bad response in getWeapons. Code: " + status);
                 }

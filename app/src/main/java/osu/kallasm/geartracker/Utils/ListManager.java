@@ -10,7 +10,9 @@ import osu.kallasm.geartracker.DataModels.WeaponData;
 import osu.kallasm.geartracker.HomeActivity;
 import osu.kallasm.geartracker.HttpHandler;
 import osu.kallasm.geartracker.Interfaces.AttachmentListView;
+import osu.kallasm.geartracker.Interfaces.AttachmentSpinnerView;
 import osu.kallasm.geartracker.Interfaces.WeaponListView;
+import osu.kallasm.geartracker.Interfaces.WeaponSpinnerView;
 
 //Singleton to manage the Weapon and Attachments list for the app
 //  Should allow for consistency between activities and reduce HTTP calls
@@ -20,7 +22,11 @@ public class ListManager {
     private ArrayList<WeaponData> weaponList = null;
     private ArrayList<AttachmentData> attachmentList = null;
     private ArrayList<WeaponListView> weaponListViews = null;
+    private ArrayList<WeaponSpinnerView>  weaponSpinnerViews = null;
     private ArrayList<AttachmentListView> attachmentListViews = null;
+    private ArrayList<AttachmentSpinnerView> attachmentSpinnerViews = null;
+    private ArrayList<String> attachmentSpinnerList = null;
+    private ArrayList<String> weaponSpinnerList = null;
     private HomeActivity home;
     private Lock attachmentLock = new ReentrantLock();
     private Lock weaponLock = new ReentrantLock();
@@ -34,64 +40,127 @@ public class ListManager {
             manager.weaponList = new ArrayList<>();
             manager.attachmentList = new ArrayList<>();
             manager.weaponListViews = new ArrayList<>();
+            manager.weaponSpinnerViews = new ArrayList<>();
             manager.attachmentListViews = new ArrayList<>();
+            manager.attachmentSpinnerViews = new ArrayList<>();
+            manager.attachmentSpinnerList = new ArrayList<>();
+            manager.attachmentSpinnerList.add("None");
+            manager.weaponSpinnerList = new ArrayList<>();
+            manager.weaponSpinnerList.add("None");
             manager.home = home;
         }
         return manager;
     }
 
+
     synchronized public void registerWeaponListView(WeaponListView view){
         weaponListViews.add(view);
+    }
+
+    synchronized  public void registerWeaponSpinnerView(WeaponSpinnerView view){
+        weaponSpinnerViews.add(view);
     }
 
     synchronized public void removeWeaponListView(WeaponListView view){
         weaponListViews.remove(view);
     }
 
+    synchronized public void removeWeaponSpinnerView(WeaponSpinnerView view){
+        weaponSpinnerViews.remove(view);
+    }
+
     synchronized public void registerAttachmentListView(AttachmentListView view){
         attachmentListViews.add(view);
+    }
+
+    synchronized public void registerAttachmentSpinnerView(AttachmentSpinnerView view){
+        attachmentSpinnerViews.add(view);
     }
 
     synchronized public void removeAttachmentListView(AttachmentListView view){
         attachmentListViews.remove(view);
     }
 
+    synchronized public void removeAttachmentSpinnerView(AttachmentSpinnerView view){
+        attachmentSpinnerViews.remove(view);
+    }
+
     public void setWeaponList(ArrayList<WeaponData> list){
         weaponLock.lock();
         this.weaponList = list;
+        weaponSpinnerList.clear();
+        weaponSpinnerList.add("None");
+        for(WeaponData wpn : weaponList){
+            addWeaponToSpinner(wpn);
+        }
         weaponLock.unlock();
+        refreshWeaponsLists();
+        refreshWeaponSpinnerLists();
     }
 
-    public void refreshWeaponsLists(){
-        weaponLock.lock();
+    private void refreshWeaponsLists(){
         for (WeaponListView view : weaponListViews) {
             final WeaponListView v = view;
             //Source: CS496 Lecture - okhttp
             home.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    v.updateWeaponList(weaponList);
+                    v.updateWeaponList();
                 }
             });
         }
-        weaponLock.unlock();
     }
 
-    public void setAttachmentList(ArrayList<AttachmentData> list){ this.attachmentList = list;}
+    private void refreshWeaponSpinnerLists(){
+        for (WeaponSpinnerView view : weaponSpinnerViews) {
+            final WeaponSpinnerView v = view;
+            //Source: CS496 Lecture - okhttp
+            home.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    v.updateWeaponSpinnerList();
+                }
+            });
+        }
+    }
 
-    public void refreshAttachmentLists(){
+    public void setAttachmentList(ArrayList<AttachmentData> list){
         attachmentLock.lock();
+        this.attachmentList = list;
+        attachmentSpinnerList.clear();
+        attachmentSpinnerList.add("None");
+        for(AttachmentData attch : attachmentList){
+            addAttachmentToSpinner(attch);
+        }
+        attachmentLock.unlock();
+        refreshAttachmentsLists();
+        refreshAttachmentSpinnerLists();
+    }
+
+    private void refreshAttachmentsLists(){
         for (AttachmentListView view : attachmentListViews) {
             final AttachmentListView v = view;
             //Source: CS496 Lecture - okhttp
             home.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    v.updateAttachmentList(attachmentList);
+                    v.updateAttachmentList();
                 }
             });
         }
-        attachmentLock.unlock();
+    }
+
+    private void refreshAttachmentSpinnerLists(){
+        for (AttachmentSpinnerView view : attachmentSpinnerViews) {
+            final AttachmentSpinnerView v = view;
+            //Source: CS496 Lecture - okhttp
+            home.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    v.updateAttachmentSpinnerList();
+                }
+            });
+        }
     }
 
     private ArrayList<WeaponData> getWeaponList(){return weaponList;}
@@ -102,6 +171,22 @@ public class ListManager {
             list.add(wpn);
         }
         weaponLock.unlock();
+    }
+
+    public void copyWeaponSpinner(ArrayList<String> list){
+        weaponLock.lock();
+        for(String wpn : weaponSpinnerList){
+            list.add(wpn);
+        }
+        weaponLock.unlock();
+    }
+
+    public void copyAttachmentSpinner(ArrayList<String> list){
+        attachmentLock.lock();
+        for(String wpn : attachmentSpinnerList){
+            list.add(wpn);
+        }
+        attachmentLock.unlock();
     }
 
     private ArrayList<AttachmentData> getAttachmentList() {return attachmentList;}
@@ -129,6 +214,7 @@ public class ListManager {
     public void weaponAdded(WeaponData weapon){
         weaponLock.lock();
         weaponList.add(weapon);
+        addWeaponToSpinner(weapon);
         weaponLock.unlock();
         refreshWeaponsLists();
     }
@@ -140,8 +226,9 @@ public class ListManager {
     public void attachmentAdded(AttachmentData attachment){
         attachmentLock.lock();
         attachmentList.add(attachment);
+        addAttachmentToSpinner(attachment);
         attachmentLock.unlock();
-        refreshAttachmentLists();
+        refreshAttachmentsLists();
     }
 
     public int getWeaponPosition(String id){
@@ -163,6 +250,7 @@ public class ListManager {
         if (position >= 0) {
             weaponLock.lock();
             weaponList.set(position, weapon);
+            weaponSpinnerList.set(position+1, getWeaponSpinnerString(weapon));
             weaponLock.unlock();
             refreshWeaponsLists();
         }
@@ -177,6 +265,7 @@ public class ListManager {
         if(position >= 0){
             weaponLock.lock();
             weaponList.remove(position);
+            weaponSpinnerList.remove(position + 1);
             weaponLock.unlock();
             refreshWeaponsLists();
         }
@@ -201,8 +290,9 @@ public class ListManager {
         if (position >= 0){
             attachmentLock.lock();
             attachmentList.set(position, attachment);
+            attachmentSpinnerList.set(position+1, getAttachmentSpinnerString(attachment));
             attachmentLock.unlock();
-            refreshAttachmentLists();
+            refreshAttachmentsLists();
         }
     }
 
@@ -215,8 +305,27 @@ public class ListManager {
         if(position >= 0){
             attachmentLock.lock();
             attachmentList.remove(position);
+            attachmentSpinnerList.remove(position + 1);
             attachmentLock.unlock();
-            refreshAttachmentLists();
+            refreshAttachmentsLists();
         }
+    }
+
+    private String getWeaponSpinnerString(WeaponData weapon){
+        String spinnerData = weapon.name + ":  " + weapon.damage + "% dmg";
+        return spinnerData;
+    }
+
+    private void addWeaponToSpinner(WeaponData weapon){
+        weaponSpinnerList.add(getWeaponSpinnerString(weapon));
+    }
+
+    private String getAttachmentSpinnerString(AttachmentData attachment){
+        String spinnerData = attachment.name + "- " + attachment.primaryAttribute + ", " + attachment.secondaryAttribute;
+        return spinnerData;
+    }
+
+    private void addAttachmentToSpinner(AttachmentData attachment){
+        attachmentSpinnerList.add(getAttachmentSpinnerString(attachment));
     }
 }
