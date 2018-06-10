@@ -1,5 +1,7 @@
 package osu.kallasm.geartracker.Utils;
 
+import android.support.v7.app.AppCompatActivity;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
@@ -17,14 +19,50 @@ import osu.kallasm.geartracker.Interfaces.WeaponSpinnerView;
 //Singleton to manage the Weapon and Attachments list for the app
 //  Should allow for consistency between activities and reduce HTTP calls
 public class ListManager {
+    private class WeaponListPair {
+        WeaponListView view;
+        AppCompatActivity activity;
+        WeaponListPair(WeaponListView view, AppCompatActivity activity){
+            this.view = view;
+            this.activity = activity;
+        }
+    }
+
+    private class WeaponSpinnerPair {
+        WeaponSpinnerView view;
+        AppCompatActivity activity;
+        WeaponSpinnerPair(WeaponSpinnerView view, AppCompatActivity activity){
+            this.view = view;
+            this.activity = activity;
+        }
+    }
+
+    private class AttachmentListPair {
+        AttachmentListView view;
+        AppCompatActivity activity;
+        AttachmentListPair(AttachmentListView view, AppCompatActivity activity){
+            this.view = view;
+            this.activity = activity;
+        }
+    }
+
+    private class AttachmentSpinnerPair {
+        AttachmentSpinnerView view;
+        AppCompatActivity activity;
+        AttachmentSpinnerPair(AttachmentSpinnerView view, AppCompatActivity activity){
+            this.view = view;
+            this.activity = activity;
+        }
+    }
+
     private static ListManager manager = null;
     private static HttpHandler client;
     private ArrayList<WeaponData> weaponList = null;
     private ArrayList<AttachmentData> attachmentList = null;
-    private ArrayList<WeaponListView> weaponListViews = null;
-    private ArrayList<WeaponSpinnerView>  weaponSpinnerViews = null;
-    private ArrayList<AttachmentListView> attachmentListViews = null;
-    private ArrayList<AttachmentSpinnerView> attachmentSpinnerViews = null;
+    private ArrayList<WeaponListPair> weaponListViews = null;
+    private ArrayList<WeaponSpinnerPair>  weaponSpinnerViews = null;
+    private ArrayList<AttachmentListPair> attachmentListViews = null;
+    private ArrayList<AttachmentSpinnerPair> attachmentSpinnerViews = null;
     private ArrayList<String> attachmentSpinnerList = null;
     private ArrayList<String> weaponSpinnerList = null;
     private HomeActivity home;
@@ -53,36 +91,56 @@ public class ListManager {
     }
 
 
-    synchronized public void registerWeaponListView(WeaponListView view){
-        weaponListViews.add(view);
+    synchronized public void registerWeaponListView(WeaponListView view, AppCompatActivity activity){
+        weaponListViews.add(new WeaponListPair(view, activity));
     }
 
-    synchronized  public void registerWeaponSpinnerView(WeaponSpinnerView view){
-        weaponSpinnerViews.add(view);
+    synchronized  public void registerWeaponSpinnerView(WeaponSpinnerView view, AppCompatActivity activity){
+        weaponSpinnerViews.add(new WeaponSpinnerPair(view, activity));
     }
 
     synchronized public void removeWeaponListView(WeaponListView view){
-        weaponListViews.remove(view);
+        for (WeaponListPair pair : weaponListViews){
+            if (pair.view == view){
+                weaponListViews.remove(pair);
+                return;
+            }
+        }
     }
 
     synchronized public void removeWeaponSpinnerView(WeaponSpinnerView view){
-        weaponSpinnerViews.remove(view);
+        for (WeaponSpinnerPair pair : weaponSpinnerViews){
+            if (pair.view == view){
+                weaponSpinnerViews.remove(pair);
+                return;
+            }
+        }
     }
 
-    synchronized public void registerAttachmentListView(AttachmentListView view){
-        attachmentListViews.add(view);
+    synchronized public void registerAttachmentListView(AttachmentListView view, AppCompatActivity activity){
+        attachmentListViews.add(new AttachmentListPair(view, activity));
     }
 
-    synchronized public void registerAttachmentSpinnerView(AttachmentSpinnerView view){
-        attachmentSpinnerViews.add(view);
+    synchronized public void registerAttachmentSpinnerView(AttachmentSpinnerView view, AppCompatActivity activity){
+        attachmentSpinnerViews.add(new AttachmentSpinnerPair(view, activity));
     }
 
     synchronized public void removeAttachmentListView(AttachmentListView view){
-        attachmentListViews.remove(view);
+        for (AttachmentListPair pair : attachmentListViews){
+            if (pair.view == view){
+                attachmentListViews.remove(pair);
+                return;
+            }
+        }
     }
 
     synchronized public void removeAttachmentSpinnerView(AttachmentSpinnerView view){
-        attachmentSpinnerViews.remove(view);
+        for (AttachmentSpinnerPair pair : attachmentSpinnerViews){
+            if (pair.view == view){
+                attachmentSpinnerViews.remove(pair);
+                return;
+            }
+        }
     }
 
     public void setWeaponList(ArrayList<WeaponData> list){
@@ -99,12 +157,15 @@ public class ListManager {
     }
 
     private void refreshWeaponsLists(){
-        for (WeaponListView view : weaponListViews) {
-            final WeaponListView v = view;
+        System.out.println("refreshWeaponsList called size: " + weaponListViews.size());
+        for (WeaponListPair pair : weaponListViews) {
+            System.out.println("found a pair in refreshWeaponsList");
+            final WeaponListView v = pair.view;
             //Source: CS496 Lecture - okhttp
-            home.runOnUiThread(new Runnable() {
+            pair.activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    System.out.println("Refresh weapons");
                     v.updateWeaponList();
                 }
             });
@@ -112,10 +173,10 @@ public class ListManager {
     }
 
     private void refreshWeaponSpinnerLists(){
-        for (WeaponSpinnerView view : weaponSpinnerViews) {
-            final WeaponSpinnerView v = view;
+        for (WeaponSpinnerPair pair : weaponSpinnerViews) {
+            final WeaponSpinnerView v = pair.view;
             //Source: CS496 Lecture - okhttp
-            home.runOnUiThread(new Runnable() {
+            pair.activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     v.updateWeaponSpinnerList();
@@ -138,10 +199,10 @@ public class ListManager {
     }
 
     private void refreshAttachmentsLists(){
-        for (AttachmentListView view : attachmentListViews) {
-            final AttachmentListView v = view;
+        for (AttachmentListPair pair : attachmentListViews) {
+            final AttachmentListView v = pair.view;
             //Source: CS496 Lecture - okhttp
-            home.runOnUiThread(new Runnable() {
+            pair.activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     v.updateAttachmentList();
@@ -151,10 +212,10 @@ public class ListManager {
     }
 
     private void refreshAttachmentSpinnerLists(){
-        for (AttachmentSpinnerView view : attachmentSpinnerViews) {
-            final AttachmentSpinnerView v = view;
+        for (AttachmentSpinnerPair pair : attachmentSpinnerViews) {
+            final AttachmentSpinnerView v = pair.view;
             //Source: CS496 Lecture - okhttp
-            home.runOnUiThread(new Runnable() {
+            pair.activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     v.updateAttachmentSpinnerList();
@@ -232,27 +293,51 @@ public class ListManager {
     }
 
     public int getWeaponPosition(String id){
-        weaponLock.lock();
         for(int i = 0; i < weaponList.size(); i++){
             if (weaponList.get(i).id.equals(id)){
-                weaponLock.unlock();
                 return i;
             }
         }
-        weaponLock.unlock();
         return -1;
     }
 
     public void updateWeapon(WeaponData weapon){client.updateWeapon(this, weapon);}
 
     public void weaponUpdated(WeaponData weapon) {
+        System.out.printf("Weapon %s: %d damage. Attached: %s\n", weapon.name, weapon.damage, weapon.attachment);
         int position = getWeaponPosition(weapon.id);
         if (position >= 0) {
             weaponLock.lock();
+            String prevAttId = weaponList.get(position).attachment;
+            attachmentLock.lock();
+            //if new attachment is not the same as old attachment
+            if (prevAttId != null && !prevAttId.equals(weapon.attachment)){
+                //Remove weapon from old attachment
+                int prevAttPos = getAttachmentPosition(prevAttId);
+                AttachmentData prevAtt = attachmentList.get(prevAttPos);
+                prevAtt.attached_to = null;
+                attachmentList.set(prevAttPos, prevAtt);
+            }
+            //update new attachment
+            if (weapon.attachment != null){
+                int newAttPos = getAttachmentPosition(weapon.attachment);
+                AttachmentData newAtt = attachmentList.get(newAttPos);
+                //if new attachment used to have a weapon, update that:
+                if (newAtt.attached_to != null){
+                    int oldWeapPos = getWeaponPosition(newAtt.attached_to);
+                    WeaponData old = weaponList.get(oldWeapPos);
+                    old.attachment = null;
+                    weaponList.set(oldWeapPos, old);
+                }
+                newAtt.attached_to = weapon.id;
+                attachmentList.set(newAttPos, newAtt);
+            }
+            attachmentLock.unlock();
             weaponList.set(position, weapon);
             weaponSpinnerList.set(position+1, getWeaponSpinnerString(weapon));
             weaponLock.unlock();
             refreshWeaponsLists();
+            refreshAttachmentsLists();
         }
     }
 
@@ -263,23 +348,30 @@ public class ListManager {
     public void weaponDeleted(WeaponData weapon){
         int position = getWeaponPosition(weapon.id);
         if(position >= 0){
+            String prevAttId = weaponList.get(position).attachment;
+            if (prevAttId != null){
+                attachmentLock.lock();
+                int prevAttPos = getAttachmentPosition(prevAttId);
+                AttachmentData prevAtt = attachmentList.get(prevAttPos);
+                prevAtt.attached_to = null;
+                attachmentList.set(prevAttPos, prevAtt);
+                attachmentLock.unlock();
+            }
             weaponLock.lock();
             weaponList.remove(position);
             weaponSpinnerList.remove(position + 1);
             weaponLock.unlock();
             refreshWeaponsLists();
+            refreshAttachmentsLists();
         }
     }
 
     public int getAttachmentPosition(String id){
-        attachmentLock.lock();
         for(int i = 0; i < attachmentList.size(); i++){
             if (attachmentList.get(i).id.equals(id)){
-                attachmentLock.unlock();
                 return i;
             }
         }
-        attachmentLock.unlock();
         return -1;
     }
 
@@ -288,11 +380,38 @@ public class ListManager {
     public void attachmentUpdated(AttachmentData attachment){
         int position = getAttachmentPosition(attachment.id);
         if (position >= 0){
+            String prevWeapId = attachmentList.get(position).attached_to;
+            weaponLock.lock();
+            //new weapon is not the same as old
+            if (prevWeapId != null && !prevWeapId.equals(attachment.attached_to)){
+                //Remove attachment from previous weapon
+                int prevWeapPos = getWeaponPosition(prevWeapId);
+                WeaponData prevWeap = weaponList.get(prevWeapPos);
+                prevWeap.attachment = null;
+                weaponList.set(prevWeapPos, prevWeap);
+
+            }
+            //update new weapon
+            if (attachment.attached_to != null){
+                int newWeapPos = getWeaponPosition(attachment.attached_to);
+                WeaponData newWeap = weaponList.get(newWeapPos);
+                //if new weapon had an old attachment, update that too
+                if (newWeap.attachment != null){
+                    int oldAttPos = getAttachmentPosition(newWeap.attachment);
+                    AttachmentData old = attachmentList.get(oldAttPos);
+                    old.attached_to = null;
+                    attachmentList.set(oldAttPos, old);
+                }
+                newWeap.attachment = attachment.id;
+                weaponList.set(newWeapPos, newWeap);
+            }
+            weaponLock.unlock();
             attachmentLock.lock();
             attachmentList.set(position, attachment);
             attachmentSpinnerList.set(position+1, getAttachmentSpinnerString(attachment));
             attachmentLock.unlock();
             refreshAttachmentsLists();
+            refreshWeaponsLists();
         }
     }
 
@@ -303,11 +422,21 @@ public class ListManager {
     public void attachmentDeleted(AttachmentData attachment){
         int position = getAttachmentPosition(attachment.id);
         if(position >= 0){
+            String prevWeapId = attachmentList.get(position).attached_to;
+            if (prevWeapId != null){
+                weaponLock.lock();
+                int prevWeapPos = getWeaponPosition(prevWeapId);
+                WeaponData prevWeap = weaponList.get(prevWeapPos);
+                prevWeap.attachment = null;
+                weaponList.set(prevWeapPos,prevWeap);
+                weaponLock.unlock();
+            }
             attachmentLock.lock();
             attachmentList.remove(position);
             attachmentSpinnerList.remove(position + 1);
             attachmentLock.unlock();
             refreshAttachmentsLists();
+            refreshWeaponsLists();
         }
     }
 
@@ -321,11 +450,39 @@ public class ListManager {
     }
 
     private String getAttachmentSpinnerString(AttachmentData attachment){
-        String spinnerData = attachment.name + "- " + attachment.primaryAttribute + ", " + attachment.secondaryAttribute;
+        String spinnerData = attachment.name + ":  " + attachment.primaryAttribute + ", " + attachment.secondaryAttribute;
         return spinnerData;
     }
 
     private void addAttachmentToSpinner(AttachmentData attachment){
         attachmentSpinnerList.add(getAttachmentSpinnerString(attachment));
+    }
+
+    public String getWeaponSpinnerString(int position){
+        if (weaponSpinnerList.size() > position){
+            return weaponSpinnerList.get(position);
+        }
+        return null;
+    }
+
+    public String getAttachmentSpinnerString(int position){
+        if (attachmentSpinnerList.size() > position){
+            return attachmentSpinnerList.get(position);
+        }
+        return null;
+    }
+
+    public String getWeaponId(int position){
+        if (weaponList.size() > position){
+            return weaponList.get(position).id;
+        }
+        return null;
+    }
+
+    public String getAttachmentId(int position){
+        if (attachmentList.size() > position){
+            return attachmentList.get(position).id;
+        }
+        return null;
     }
 }

@@ -55,5 +55,6 @@ public class AddWeapon extends AppCompatActivity {
         newWeapon.freeTalent = freeTalent.getSelectedItem().toString();
         newWeapon.attachment = null;
         manager.addWeapon(newWeapon);
+        onBackPressed();
     }
 }

@@ -21,12 +21,11 @@ import osu.kallasm.geartracker.Interfaces.AttachmentSpinnerView;
 import osu.kallasm.geartracker.Interfaces.WeaponListView;
 import osu.kallasm.geartracker.Utils.ListManager;
 
-public class WeaponsList extends AppCompatActivity implements WeaponListView, AttachmentSpinnerView {
+public class WeaponsList extends AppCompatActivity implements WeaponListView {
     private WeaponAdapter adapter;
     private RecyclerView recyclerView;
     private ListManager manager;
     private ArrayList<WeaponData> weaponList;
-    private ArrayList<String> attachmentSpinnerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,36 +40,45 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView, At
 
         manager = ListManager.getListManager(null);
         weaponList = new ArrayList<>();
-        attachmentSpinnerList = new ArrayList<>();
-        manager.registerWeaponListView(this);
+        manager.registerWeaponListView(this, this);
         updateWeaponList();
-        manager.registerAttachmentSpinnerView(this);
         //source: https://stackoverflow.com/questions/30397460/how-to-know-when-the-recyclerview-has-finished-laying-down-the-items
         //source2: https://stackoverflow.com/questions/37116048/android-global-layout-listener-called-repeatedly-in-android
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                updateAttachmentSpinnerList();
+                refreshRecycler();
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
 
     @Override
-    public void onBackPressed(){
-        manager.removeWeaponListView(this);
-        manager.removeAttachmentSpinnerView(this);
-        super.onBackPressed();
+    public void onRestart(){
+        updateWeaponList();
+        super.onRestart();
     }
 
     @Override
-    public synchronized void updateWeaponList(){
-        weaponList.clear();
-        manager.copyWeapons(weaponList);
+    public void onDestroy(){
+        manager.removeWeaponListView(this);
+        super.onDestroy();
+    }
+
+    private void refreshRecycler(){
         if(weaponList.size() >= 0) {
             adapter = new WeaponAdapter(weaponList);
             recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void updateWeaponList(){
+        System.out.println("Updating weapon list");
+        weaponList.clear();
+        manager.copyWeapons(weaponList);
+        refreshRecycler();
     }
 
     public void showAddWeapon(View v){
@@ -78,30 +86,4 @@ public class WeaponsList extends AppCompatActivity implements WeaponListView, At
         startActivity(intent);
     }
 
-    public void addAttachment(View v){
-        //get recycler position
-
-        //get spinner position
-        //get attachment at spinner position
-        //send update notification
-        //hide attachment info
-        //manager should update Recycler on success or failure
-    }
-
-    @Override
-    public synchronized void updateAttachmentSpinnerList(){
-        attachmentSpinnerList.clear();
-        manager.copyAttachmentSpinner(attachmentSpinnerList);
-        System.out.println("In update attachment with list size = " + attachmentSpinnerList.size());
-        System.out.println("Recycler view children: " + recyclerView.getChildCount());
-        //Source: https://stackoverflow.com/questions/32811156/how-to-iterate-over-recyclerview-items
-        for(int i = 0; i < recyclerView.getChildCount(); i++){
-            WeaponAdapter.WeaponViewHolder holder = (WeaponAdapter.WeaponViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
-            if (holder == null) System.out.println("Holder is null at i = " + i);
-            else{
-                System.out.println("Holder is not null");
-                holder.setSpinner(this, attachmentSpinnerList);
-            }
-        }
-    }
 }

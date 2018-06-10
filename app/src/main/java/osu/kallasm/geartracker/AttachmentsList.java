@@ -19,12 +19,11 @@ import osu.kallasm.geartracker.Interfaces.AttachmentListView;
 import osu.kallasm.geartracker.Interfaces.WeaponSpinnerView;
 import osu.kallasm.geartracker.Utils.ListManager;
 
-public class AttachmentsList extends AppCompatActivity implements AttachmentListView, WeaponSpinnerView {
+public class AttachmentsList extends AppCompatActivity implements AttachmentListView{
     private AttachmentAdapter adapter;
     private RecyclerView recyclerView;
     private ListManager manager;
     private ArrayList<AttachmentData> attachmentList;
-    private ArrayList<String> weaponSpinnerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,37 +37,45 @@ public class AttachmentsList extends AppCompatActivity implements AttachmentList
 
         manager = ListManager.getListManager(null);
         attachmentList = new ArrayList<>();
-        manager.registerAttachmentListView(this);
+        manager.registerAttachmentListView(this, this);
         updateAttachmentList();
-
-        weaponSpinnerList = new ArrayList<>();
-        manager.registerWeaponSpinnerView(this);
         //source: https://stackoverflow.com/questions/30397460/how-to-know-when-the-recyclerview-has-finished-laying-down-the-items
         //source2: https://stackoverflow.com/questions/37116048/android-global-layout-listener-called-repeatedly-in-android
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                updateWeaponSpinnerList();
+                refreshRecycler();
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
 
     @Override
-    public void onBackPressed(){
-        manager.removeAttachmentListView(this);
-        manager.removeWeaponSpinnerView(this);
-        super.onBackPressed();
+    public void onRestart(){
+        updateAttachmentList();
+        super.onRestart();
     }
 
     @Override
-    public synchronized void updateAttachmentList(){
-        attachmentList.clear();
-        manager.copyAttachments(attachmentList);
+    public void onDestroy(){
+        manager.removeAttachmentListView(this);
+        super.onDestroy();
+    }
+
+    private void refreshRecycler(){
         if (attachmentList.size() >= 0) {
             adapter = new AttachmentAdapter(attachmentList);
             recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void updateAttachmentList(){
+        System.out.println("Updating attachment list");
+        attachmentList.clear();
+        manager.copyAttachments(attachmentList);
+        refreshRecycler();
     }
 
     public void showAddAttachment(View v){
@@ -77,19 +84,5 @@ public class AttachmentsList extends AppCompatActivity implements AttachmentList
     }
 
     public void addAttachment(View v){
-    }
-
-    @Override
-    public synchronized void updateWeaponSpinnerList(){
-        weaponSpinnerList.clear();
-        manager.copyWeaponSpinner(weaponSpinnerList);
-        //Source: https://stackoverflow.com/questions/32811156/how-to-iterate-over-recyclerview-items
-        for(int i = 0; i < recyclerView.getChildCount(); i++){
-            AttachmentAdapter.AttachmentViewHolder holder = (AttachmentAdapter.AttachmentViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
-            if (holder == null) System.out.println("Holder is null at i = " + i);
-            else{
-                holder.setSpinner(this, weaponSpinnerList);
-            }
-        }
     }
 }

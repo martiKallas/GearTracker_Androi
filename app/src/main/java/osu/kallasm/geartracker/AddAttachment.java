@@ -54,5 +54,6 @@ public class AddAttachment extends AppCompatActivity {
         newAttachment.secondaryValue = Integer.parseInt(secondaryValue.getText().toString());
         newAttachment.attached_to = null;
         manager.addAttachment(newAttachment);
+        onBackPressed();
     }
 }

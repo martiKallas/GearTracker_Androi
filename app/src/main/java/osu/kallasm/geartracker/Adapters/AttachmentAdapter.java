@@ -19,20 +19,15 @@ import java.util.List;
 import osu.kallasm.geartracker.DataModels.AttachmentData;
 import osu.kallasm.geartracker.EditAttachment;
 import osu.kallasm.geartracker.R;
+import osu.kallasm.geartracker.Utils.ListManager;
 
 public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.AttachmentViewHolder> {
 
     private List<AttachmentData> attachmentList;
     public class AttachmentViewHolder extends RecyclerView.ViewHolder{
-        public TextView aList_name, aList_primaryAttribute, aList_primaryValue, aList_secondaryAttribute, aList_secondaryValue;
-        public Button aList_unattach, aList_attach, aList_editAttachment;
-        public Spinner aList_weaponSpinner;
-
-        public void setSpinner(AppCompatActivity view, ArrayList<String> list){
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(view, R.layout.spinner_item, list);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            aList_weaponSpinner.setAdapter(adapter);
-        }
+        public TextView aList_name, aList_primaryAttribute, aList_primaryValue, aList_secondaryAttribute, aList_secondaryValue, aList_weaponName;
+        public Button aList_editAttachment;
+        private ListManager manager = ListManager.getListManager(null);
 
         public AttachmentViewHolder(View view){
             super(view);
@@ -41,33 +36,8 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.At
             aList_primaryValue = (TextView) view.findViewById(R.id.aList_primaryValue);
             aList_secondaryAttribute = (TextView) view.findViewById(R.id.aList_secondaryAttribute);
             aList_secondaryValue = (TextView) view.findViewById(R.id.aList_secondaryValue);
-            aList_unattach = (Button) view.findViewById(R.id.aList_unattach);
-            aList_attach = (Button) view.findViewById(R.id.aList_addAttachment);
             aList_editAttachment = (Button) view.findViewById(R.id.aList_editAttachment);
-            aList_weaponSpinner = (Spinner) view.findViewById(R.id.aList_weaponSpinner);
-
-            if(aList_unattach != null) {
-                //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview
-                aList_unattach.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int position = getAdapterPosition();
-                        AttachmentData attachment = attachmentList.get(position);
-                        System.out.println("Remove from weapon: " + attachment.name);
-                    }
-                });
-            }
-
-            if(aList_attach != null) {
-                aList_attach.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int position = getAdapterPosition();
-                        AttachmentData attachment = attachmentList.get(position);
-                        System.out.println("Add to weapon: " + attachment.name);
-                    }
-                });
-            }
+            aList_weaponName = (TextView) view.findViewById(R.id.aList_weaponName);
 
             if(aList_editAttachment != null) {
                 aList_editAttachment.setOnClickListener(new View.OnClickListener() {
@@ -111,15 +81,22 @@ public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.At
         holder.aList_primaryValue.setText(String.valueOf(attch.primaryValue));
         holder.aList_secondaryAttribute.setText(attch.secondaryAttribute);
         holder.aList_secondaryValue.setText(String.valueOf(attch.secondaryValue));
+        //From attempt to include spinner in recyclerView
         if (attch.attached_to == null){
-            //Hide attachment details
-            ConstraintLayout attach = holder.itemView.findViewById(R.id.aList_attached);
-            //Source: https://stackoverflow.com/questions/5756136/how-to-hide-a-view-programmatically
-            attach.setVisibility(View.GONE);
+            holder.aList_weaponName.setText("No Weapon");
         }
         else{
-            ConstraintLayout unattach = holder.itemView.findViewById(R.id.aList_unattachedLayout);
-            unattach.setVisibility(View.GONE);
+            int weapPos = holder.manager.getWeaponPosition(attch.attached_to);
+            String spinnerDescr = null;
+            if (weapPos >= 0) {
+                spinnerDescr = holder.manager.getWeaponSpinnerString(weapPos + 1);
+            }
+            if (spinnerDescr != null) {
+                holder.aList_weaponName.setText(spinnerDescr);
+            }
+            else{
+                holder.aList_weaponName.setText("Loading...");
+            }
         }
     }
 

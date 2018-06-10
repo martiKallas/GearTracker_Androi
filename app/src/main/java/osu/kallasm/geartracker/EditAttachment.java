@@ -23,7 +23,6 @@ public class EditAttachment extends AppCompatActivity implements WeaponSpinnerVi
     Spinner primaryAttribute, secondaryAttribute, attached_to;
     EditText name, primaryValue, secondaryValue;
     AttachmentData attachment;
-    ArrayList<WeaponData> weaponList;
     ArrayList<String> weaponSpinnerList;
     ListManager manager = ListManager.getListManager(null);
     @Override
@@ -34,7 +33,6 @@ public class EditAttachment extends AppCompatActivity implements WeaponSpinnerVi
         attachment = (AttachmentData) editIntent.getSerializableExtra("attachment");
         //System.out.println("Attachment name: " + attachment.name);
         //System.out.println("Attachment id: " + attachment.id);
-        weaponList = new ArrayList<>();
         weaponSpinnerList = new ArrayList<>();
 
         String[] content = StaticLists.ATTRIBUTES;
@@ -56,7 +54,10 @@ public class EditAttachment extends AppCompatActivity implements WeaponSpinnerVi
 
         //Set attached_to spinner
         attached_to = (Spinner)findViewById(R.id.editAttachment_attachedTo);
-        manager.registerWeaponSpinnerView(this);
+        if (attachment.attached_to != null){
+            attached_to.setSelection(manager.getWeaponPosition(attachment.attached_to) + 1);
+        }
+        manager.registerWeaponSpinnerView(this, this);
         updateWeaponSpinnerList();
 
         //Assign current values:
@@ -67,36 +68,50 @@ public class EditAttachment extends AppCompatActivity implements WeaponSpinnerVi
         secondaryAttribute.setSelection(StaticLists.getAttributePosition(attachment.secondaryAttribute));
     }
 
+    @Override
+    public void onRestart(){
+        updateWeaponSpinnerList();
+        super.onRestart();
+    }
+
     public void updateAttachment(View v){
         attachment.name = name.getText().toString();
         attachment.primaryValue = Integer.parseInt(primaryValue.getText().toString());
         attachment.primaryAttribute = primaryAttribute.getSelectedItem().toString();
         attachment.secondaryAttribute = secondaryAttribute.getSelectedItem().toString();
         attachment.secondaryValue = Integer.parseInt(secondaryValue.getText().toString());
-        attachment.attached_to = null;
+        int selectedWeapon = attached_to.getSelectedItemPosition();
+        if (selectedWeapon == 0) {
+            attachment.attached_to = null;
+        }
+        else{
+            attachment.attached_to = manager.getWeaponId(selectedWeapon - 1);
+        }
         manager.updateAttachment(attachment);
         onBackPressed();
     }
 
     public void deleteAttachment(View v){
         manager.deleteAttachment(attachment);
+        onBackPressed();
     }
 
     @Override
     public void updateWeaponSpinnerList(){
-        weaponList.clear();
-        manager.copyWeapons(weaponList);
         weaponSpinnerList.clear();
         manager.copyWeaponSpinner(weaponSpinnerList);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, weaponSpinnerList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         attached_to.setAdapter(adapter);
+        if (attachment.attached_to != null){
+            attached_to.setSelection(manager.getWeaponPosition(attachment.attached_to) + 1);
+        }
     }
 
     @Override
-    public void onBackPressed(){
+    public void onDestroy(){
         manager.removeWeaponSpinnerView(this);
-        super.onBackPressed();
+        super.onDestroy();
     }
 }

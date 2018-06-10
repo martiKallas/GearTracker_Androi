@@ -21,21 +21,15 @@ import java.util.List;
 import osu.kallasm.geartracker.DataModels.WeaponData;
 import osu.kallasm.geartracker.EditWeapon;
 import osu.kallasm.geartracker.R;
+import osu.kallasm.geartracker.Utils.ListManager;
 
 public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponViewHolder> {
 
     private List<WeaponData> weaponList;
     public class WeaponViewHolder extends RecyclerView.ViewHolder{
-        public TextView wList_name, wList_damage, wList_talentOne, wList_talentTwo, wList_freeTalent;
-        public Button wList_removeAttachment, wList_addAttachment, wList_editWeapon;
-        public Spinner wList_attachmentSpinner;
-
-
-        public void setSpinner(AppCompatActivity view, ArrayList<String> list){
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(view, R.layout.spinner_item, list);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            wList_attachmentSpinner.setAdapter(adapter);
-        }
+        public TextView wList_name, wList_damage, wList_talentOne, wList_talentTwo, wList_freeTalent, wList_attachmentName;
+        public Button wList_editWeapon;
+        private ListManager manager = ListManager.getListManager(null);
 
         public WeaponViewHolder(View view){
             super(view);
@@ -44,33 +38,8 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
             wList_talentOne = (TextView) view.findViewById(R.id.wList_talentOne);
             wList_talentTwo = (TextView) view.findViewById(R.id.wList_talentTwo);
             wList_freeTalent = (TextView) view.findViewById(R.id.wList_freeTalent);
-            wList_removeAttachment = (Button) view.findViewById(R.id.wList_removeAttachment);
-            wList_addAttachment = (Button) view.findViewById(R.id.wList_addAttachment);
+            wList_attachmentName = (TextView) view.findViewById(R.id.wList_attachmentName);
             wList_editWeapon = (Button) view.findViewById(R.id.wList_editWeapon);
-            wList_attachmentSpinner = (Spinner) view.findViewById(R.id.wList_attachmentSpinner);
-
-            //source: http://www.jyotman.xyz/post/creating-add-and-remove-type-list-using-recyclerview
-            if(wList_removeAttachment != null) {
-                wList_removeAttachment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int position = getAdapterPosition();
-                        WeaponData weapon = weaponList.get(position);
-                        System.out.println("Remove attachment from " + weapon.name);
-                    }
-                });
-            }
-
-            if(wList_addAttachment != null) {
-                wList_addAttachment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int position = getAdapterPosition();
-                        WeaponData weapon = weaponList.get(position);
-                        System.out.println("Add attachment to " + weapon.name);
-                    }
-                });
-            }
 
             if(wList_editWeapon != null) {
                 wList_editWeapon.setOnClickListener(new View.OnClickListener() {
@@ -113,15 +82,21 @@ public class WeaponAdapter extends RecyclerView.Adapter<WeaponAdapter.WeaponView
         holder.wList_talentOne.setText(wpn.firstTalent);
         holder.wList_talentTwo.setText(wpn.secondTalent);
         holder.wList_freeTalent.setText(wpn.freeTalent);
-        if (wpn.attachment == null){
-            //Hide attachment details
-            ConstraintLayout attach = holder.itemView.findViewById(R.id.wList_attached);
-            //Source: https://stackoverflow.com/questions/5756136/how-to-hide-a-view-programmatically
-            attach.setVisibility(View.GONE);
+        if (wpn.attachment == null) {
+            holder.wList_attachmentName.setText("No attachment");
         }
         else{
-            ConstraintLayout unattach = holder.itemView.findViewById(R.id.wList_unattachedLayout);
-            unattach.setVisibility(View.GONE);
+            int attachPos = holder.manager.getAttachmentPosition(wpn.attachment);
+            String attachDescr = null;
+            if (attachPos >= 0) {
+                attachDescr = holder.manager.getAttachmentSpinnerString(attachPos + 1);
+            }
+            if (attachDescr != null){
+                holder.wList_attachmentName.setText(attachDescr);
+            }
+            else{
+                holder.wList_attachmentName.setText("Loading...");
+            }
         }
 
     }
